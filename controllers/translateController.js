@@ -1,7 +1,3 @@
-const { GoogleGenAI } = require("@google/genai");
-
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-
 const formalityLevels = {
   1: {
     label: "Professional",
@@ -38,7 +34,6 @@ const translate = async (req, res) => {
       .status(400)
       .json({ error: "Please provide some text to translate." });
   }
-
   if (text.trim().length > 500) {
     return res
       .status(400)
@@ -68,18 +63,99 @@ Rules:
 - Make it funny if the level is 4 or 5`;
 
   try {
-    const result = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: prompt,
-    });
-    const response = result.text.trim();
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+    res.setHeader("X-Accel-Buffering", "no");
+    res.flushHeaders();
 
-    return res.json({ result: response, level: label });
+    // Hit Gemini REST API directly for true streaming
+    const geminiRes = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:streamGenerateContent?alt=sse&key=${process.env.GEMINI_API_KEY}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { temperature: 0.9 },
+        }),
+      }
+    );
+
+    if (!geminiRes.ok) {
+      const errBody = await geminiRes.json();
+      const status = geminiRes.status;
+
+      let errorMessage = "Something went wrong with the AI. Try again!";
+      if (status === 429) {
+        errorMessage =
+          "Slow down! You're hitting Gemini's rate limit. Wait a few seconds and try again. 🐢";
+      }
+
+      res.write(
+        `event: error\ndata: ${JSON.stringify({ error: errorMessage })}\n\n`
+      );
+      res.end();
+      return;
+    }
+
+    // Send label immediately
+    res.write(`event: meta\ndata: ${JSON.stringify({ level: label })}\n\n`);
+    res.flushHeaders();
+
+    const reader = geminiRes.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop(); // keep incomplete line
+
+      for (const line of lines) {
+        if (!line.startsWith("data: ")) continue;
+
+        const jsonStr = line.slice(6).trim();
+        if (!jsonStr || jsonStr === "[DONE]") continue;
+
+        try {
+          const parsed = JSON.parse(jsonStr);
+          const chunkText = parsed?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+          if (chunkText) {
+            res.write(
+              `event: chunk\ndata: ${JSON.stringify({ text: chunkText })}\n\n`
+            );
+            // force flush after every single chunk
+            if (res.socket) {
+              res.socket.write("");
+            }
+          }
+        } catch {
+          // skip malformed chunk
+        }
+      }
+    }
+
+    res.write(`event: done\ndata: {}\n\n`);
+    res.end();
   } catch (err) {
     console.error("Gemini API error:", err.message);
-    return res
-      .status(500)
-      .json({ error: "Something went wrong with the AI. Try again!" });
+    if (res.headersSent) {
+      res.write(
+        `event: error\ndata: ${JSON.stringify({
+          error: "Something went wrong with the AI. Try again!",
+        })}\n\n`
+      );
+      res.end();
+    } else {
+      res
+        .status(500)
+        .json({ error: "Something went wrong with the AI. Try again!" });
+    }
   }
 };
 
