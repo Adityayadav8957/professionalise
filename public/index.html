@@ -1,99 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RantWash</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/style.css" />
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RantWash</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header>
+        <div class="logo">🧼 Corpify</div>
+        <p>
+          Scrub your unhinged thoughts. Emerge as a LinkedIn thought leader.
+        </p>
+      </header>
 
-  <div class="page">
-
-    <header>
-      <div class="logo">🧼 RantWash</div>
-      <p>Scrub your unhinged thoughts. Emerge as a LinkedIn thought leader.</p>
-    </header>
-
-    <div class="card">
-
-      <!-- Chips -->
-      <div class="chips">
-        <button class="chip" data-text="My boss is a complete idiot who has no idea what he's doing but somehow has a corner office">Corner office clown 🤡</button>
-        <button class="chip" data-text="I sat in a 2-hour meeting that could have been a single sentence email and now I want to flip a table">2hr meeting 😤</button>
-        <button class="chip" data-text="I have absolutely no clue what I'm doing and I've been faking it for 6 months">6 months of faking it 😅</button>
-        <button class="chip" data-text="My coworker literally copy-pasted my entire report, put their name on it, and got a promotion">Got promoted off my work 🐍</button>
-        <button class="chip" data-text="This deadline is physically impossible and whoever set it has never done actual work in their life">Impossible deadline 🔥</button>
-      </div>
-
-      <div class="divider"></div>
-
-      <!-- Input -->
-      <div class="field">
-        <label class="field-label">Your raw thought</label>
-        <textarea
-          id="inputText"
-          placeholder="e.g. My boss is an idiot and I can't take it anymore..."
-          maxlength="500"
-          rows="4"
-        ></textarea>
-        <div class="char-count"><span id="charCount">0</span> / 500</div>
-      </div>
-
-      <!-- Slider -->
-      <div class="field">
-        <div class="slider-header">
-          <label class="field-label">Formality level</label>
-          <span class="level-pill" id="levelPill">Business Formal</span>
+      <div class="card">
+        <!-- Chips -->
+        <div class="chips">
+          <button
+            class="chip"
+            data-text="My boss is a complete idiot who has no idea what he's doing but somehow has a corner office"
+          >
+            Corner office clown 🤡
+          </button>
+          <button
+            class="chip"
+            data-text="I sat in a 2-hour meeting that could have been a single sentence email and now I want to flip a table"
+          >
+            2hr meeting 😤
+          </button>
+          <button
+            class="chip"
+            data-text="I have absolutely no clue what I'm doing and I've been faking it for 6 months"
+          >
+            6 months of faking it 😅
+          </button>
+          <button
+            class="chip"
+            data-text="My coworker literally copy-pasted my entire report, put their name on it, and got a promotion"
+          >
+            Got promoted off my work 🐍
+          </button>
+          <button
+            class="chip"
+            data-text="This deadline is physically impossible and whoever set it has never done actual work in their life"
+          >
+            Impossible deadline 🔥
+          </button>
         </div>
-        <div class="slider-track">
-          <span class="slider-emoji">😐</span>
-          <input type="range" id="formalitySlider" min="1" max="5" value="2" step="1" />
-          <span class="slider-emoji">🤣</span>
-        </div>
-        <div class="slider-ticks">
-          <span>Professional</span>
-          <span>Business Formal</span>
-          <span>Corporate</span>
-          <span>LinkedIn Guru</span>
-          <span>Overlord</span>
-        </div>
-      </div>
 
-      <!-- Button -->
-      <button class="btn" id="translateBtn">
-        <span id="btnText">🧼 Wash My Rant</span>
-      </button>
+        <div class="divider"></div>
 
-      <!-- Output -->
-      <div class="output-wrap" id="outputWrap">
-        <div class="output-header">
-          <label class="field-label">Result</label>
-          <span class="badge" id="resultBadge"></span>
+        <!-- Input -->
+        <div class="field">
+          <label class="field-label">Your raw thought</label>
+          <textarea
+            id="inputText"
+            placeholder="e.g. My boss is an idiot and I can't take it anymore..."
+            maxlength="500"
+            rows="4"
+          ></textarea>
+          <div class="char-count"><span id="charCount">0</span> / 500</div>
         </div>
-        <div class="output-box" id="outputBox">
-          <p class="placeholder-text" id="placeholder">Your professional version will appear here...</p>
-          <p class="result-text" id="resultText"></p>
+
+        <!-- Slider -->
+        <div class="field">
+          <div class="slider-header">
+            <label class="field-label">Formality level</label>
+            <span class="level-pill" id="levelPill">Business Formal</span>
+          </div>
+          <div class="slider-track">
+            <span class="slider-emoji">😐</span>
+            <input
+              type="range"
+              id="formalitySlider"
+              min="1"
+              max="5"
+              value="2"
+              step="1"
+            />
+            <span class="slider-emoji">🤣</span>
+          </div>
+          <div class="slider-ticks">
+            <span>Professional</span>
+            <span>Business Formal</span>
+            <span>Corporate</span>
+            <span>LinkedIn Guru</span>
+            <span>Overlord</span>
+          </div>
         </div>
-        <button class="copy-btn" id="copyBtn" style="display:none">
-          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          <span id="copyText">Copy</span>
+
+        <!-- Button -->
+        <button class="btn" id="translateBtn">
+          <span id="btnText">🧼 Wash My Rant</span>
         </button>
+
+        <!-- Output -->
+        <div class="output-wrap" id="outputWrap">
+          <div class="output-header">
+            <label class="field-label">Result</label>
+            <span class="badge" id="resultBadge"></span>
+          </div>
+          <div class="output-box" id="outputBox">
+            <p class="placeholder-text" id="placeholder">
+              Your professional version will appear here...
+            </p>
+            <p class="result-text" id="resultText"></p>
+          </div>
+          <button class="copy-btn" id="copyBtn" style="display: none">
+            <svg
+              width="14"
+              height="14"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <rect x="9" y="9" width="13" height="13" rx="2" />
+              <path
+                d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
+              />
+            </svg>
+            <span id="copyText">Copy</span>
+          </button>
+        </div>
+
+        <!-- Error -->
+        <div class="error" id="errorCard" style="display: none">
+          ⚠️ <span id="errorText"></span>
+        </div>
       </div>
 
-      <!-- Error -->
-      <div class="error" id="errorCard" style="display:none">
-        ⚠️ <span id="errorText"></span>
-      </div>
-
+      <footer>RantWash — turning unhinged into unbothered since 2025 🧼</footer>
     </div>
 
-    <footer>RantWash — turning unhinged into unbothered since 2025 🧼</footer>
-
-  </div>
-
-  <script src="/js/main.js"></script>
-</body>
+    <script src="/js/main.js"></script>
+  </body>
 </html>
