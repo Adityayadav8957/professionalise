@@ -23,12 +23,12 @@ app.use(
         imgSrc: ["'self'", "data:"],
       },
     },
-  }),
+  })
 );
 
 app.use(cors());
 app.use(express.json());
-
+app.set("trust proxy", 1);
 // Serve static frontend
 app.use(express.static(path.join(__dirname, "public")));
 
